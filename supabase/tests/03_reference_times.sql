@@ -1,0 +1,6 @@
+-- Prints server prayer times (local and UTC) for Dubai and Kerala cities on 20 Nov 2026.
+-- Compare with the official UAE timetable and Kerala references in RUN_LOCALLY.md.
+select city, method, to_char(fajr at time zone tz,'HH24:MI:SS') fajr, to_char(sunrise at time zone tz,'HH24:MI:SS') rise, to_char(dhuhr at time zone tz,'HH24:MI:SS') dhuhr, to_char(asr at time zone tz,'HH24:MI:SS') asr, to_char(maghrib at time zone tz,'HH24:MI:SS') magh, to_char(isha at time zone tz,'HH24:MI:SS') isha,
+ to_char(fajr at time zone 'UTC','YYYY-MM-DD HH24:MI:SS') fu, to_char(sunrise at time zone 'UTC','HH24:MI:SS') su, to_char(dhuhr at time zone 'UTC','HH24:MI:SS') du, to_char(asr at time zone 'UTC','HH24:MI:SS') au, to_char(maghrib at time zone 'UTC','HH24:MI:SS') mu, to_char(isha at time zone 'UTC','HH24:MI:SS') iu
+from (values ('Dubai',25.2048,55.2708,'Asia/Dubai','dubai'),('Kochi',9.9312,76.2673,'Asia/Kolkata','karachi'),('Kozhikode',11.2588,75.7804,'Asia/Kolkata','karachi'),('Thiruvananthapuram',8.5241,76.9366,'Asia/Kolkata','karachi'),('Kannur',11.8745,75.3704,'Asia/Kolkata','karachi'),('Malappuram',11.0510,76.0711,'Asia/Kolkata','karachi')) v(city,lat,lng,tz,method),
+lateral public.compute_prayer_times(lat,lng,date '2026-11-20',method::public.calc_method,'shafi');

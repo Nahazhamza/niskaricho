@@ -1,0 +1,56 @@
+name: niskaricho
+description: "Niskaricho? (നിസ്കരിച്ചോ?) — open-source, ad-free group prayer accountability."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.14.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  material_ui: ^1.1.0
+  cupertino_icons: ^1.0.8
+
+  # Backend: Auth, Postgres RPCs, Realtime, Storage
+  supabase_flutter: ^2.18.3
+  # Offline astronomical prayer times (port of batoulapps/adhan-js)
+  adhan_dart: ^2.0.1
+  # Notifications + time zones
+  flutter_local_notifications: ^23.0.3
+  timezone: ^0.11.2
+  flutter_timezone: ^5.1.1
+  # Device capabilities
+  geolocator: ^14.1.2
+  camera: ^0.12.2
+  wakelock_plus: ^1.8.0
+  # Photo watermarking (pure Dart)
+  image: ^4.13.1
+  intl: ^0.20.3
+  flutter_svg: ^2.5.0
+  shared_preferences: ^2.5.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icon/
+    - assets/demo/
+  # Bundled so Malayalam text and status emoji render everywhere, including
+  # the web build (which otherwise downloads fallback fonts at runtime).
+  fonts:
+    - family: NotoSansMalayalam
+      fonts:
+        - asset: assets/fonts/NotoSansMalayalam-Regular.ttf
+        - asset: assets/fonts/NotoSansMalayalam-Bold.ttf
+          weight: 700
+    - family: NotoNaskhArabic
+      fonts:
+        - asset: assets/fonts/NotoNaskhArabic.ttf
+    - family: NotoColorEmoji
+      fonts:
+        - asset: assets/fonts/NotoColorEmoji-subset.ttf
