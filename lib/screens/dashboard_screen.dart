@@ -323,7 +323,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(tr('Niskaricho?'), style: t.headlineMedium?.copyWith(fontSize: 24)),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(tr('Niskaricho?'), style: t.headlineMedium?.copyWith(fontSize: 24)),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.notifications_active_outlined, color: AppColors.gold, size: 22),
+                      tooltip: tr('Prayer Notifications'),
+                      onPressed: () async {
+                        final messenger = ScaffoldMessenger.of(context);
+                        final granted = await NotificationService.instance.requestPermission();
+                        await NotificationService.instance.testNotification();
+                        if (!mounted) return;
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              granted
+                                  ? tr('Notifications enabled! Test alert sent.')
+                                  : tr('Test alert sent! Check your notification center.'),
+                            ),
+                            duration: const Duration(seconds: 3),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
                 ValueListenableBuilder<int>(
                   valueListenable: Look.hijriAdjust,
                   builder: (_, adj, _) {

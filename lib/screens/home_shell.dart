@@ -63,6 +63,11 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
         _db.applyProfile(await _db.myProfile());
         await _db.loadMyPeriods();
         _checkTimezone(_db.myLocation);
+        final loc = _db.myLocation;
+        if (loc != null) {
+          await NotificationService.instance.init(loc.timezone);
+          await _scheduleNotifications();
+        }
         setState(() => _bootstrapped = true);
         return;
       }
@@ -104,10 +109,10 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     }
   }
 
-  /// Adhan + "20 minutes left" alerts for today and tomorrow (mobile only).
+  /// Adhan + "20 minutes left" alerts for today and tomorrow.
   Future<void> _scheduleNotifications() async {
     final loc = _db.myLocation;
-    if (loc == null || _db.isDemo) return;
+    if (loc == null) return;
     final calc = _db.myCalculator();
     final today = _db.myToday;
     final prayed = (await _db.myLogsFor(today)).where((l) => l.status.isDone).map((l) => l.prayer).toSet();

@@ -93,25 +93,34 @@ class _QiblaScreenState extends State<QiblaScreen> {
     });
 
     try {
-      // 1. Try saved user location from profile / demo
-      double? lat = _db.myLocation?.latitude;
-      double? lng = _db.myLocation?.longitude;
-      String? place = _db.myPlaceLabel;
+      double? lat;
+      double? lng;
+      String? place;
 
-      if (lat == null || lng == null) {
-        final prof = await _db.myProfile();
-        if (prof['latitude'] != null && prof['longitude'] != null) {
-          lat = (prof['latitude'] as num).toDouble();
-          lng = (prof['longitude'] as num).toDouble();
-          place = prof['place'] as String? ?? place;
-        }
-      }
-
-      // 2. If still null, query device GPS
-      if (lat == null || lng == null) {
+      // 1. Prompt and fetch live GPS from device immediately upon opening Qibla Finder
+      try {
         final loc = await _calc.currentLocation();
         lat = loc.latitude;
         lng = loc.longitude;
+        place = tr('Current GPS Location');
+      } catch (gpsError) {
+        // Fallback to saved profile / demo location if user denied GPS or if on desktop
+        lat = _db.myLocation?.latitude;
+        lng = _db.myLocation?.longitude;
+        place = _db.myPlaceLabel;
+
+        if (lat == null || lng == null) {
+          final prof = await _db.myProfile();
+          if (prof['latitude'] != null && prof['longitude'] != null) {
+            lat = (prof['latitude'] as num).toDouble();
+            lng = (prof['longitude'] as num).toDouble();
+            place = prof['place'] as String? ?? place;
+          }
+        }
+
+        if (lat == null || lng == null) {
+          rethrow;
+        }
       }
 
       final bearing = QiblaService.calculateBearing(lat, lng);
