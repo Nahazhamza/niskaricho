@@ -383,10 +383,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _quickActions(TextTheme t) => Row(
     children: [
       Expanded(
-        child: Pressable(
-          onTap: () {
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () async {
+            // Direct synchronous user gesture required by Safari for motion/orientation permission
             requestWebCompassPermission();
-            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const QiblaScreen()));
+            if (context.mounted) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const QiblaScreen()));
+            }
           },
           child: GlassCard(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
