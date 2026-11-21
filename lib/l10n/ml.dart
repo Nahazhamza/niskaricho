@@ -886,4 +886,11 @@ const mlStrings = <String, String>{
   'Rak\'ah 1: Fatiha + Surah aloud, Ruku, Sujood x2': 'റക്അത്ത് 1: ഫാത്തിഹ + സൂറത്ത് (ഉച്ചത്തിൽ), റുകൂഅ്, സുജൂദ് x2',
   'Rak\'ah 2: Fatiha + Surah aloud, Ruku, Sujood x2, First Tashahhud (sitting)': 'റക്അത്ത് 2: ഫാത്തിഹ + സൂറത്ത് (ഉച്ചത്തിൽ), റുകൂഅ്, സുജൂദ് x2, ആദ്യ അത്തഹിയ്യാത്ത്',
   'Rak\'ah 3: Stand up, Fatiha only (silent), Ruku, Sujood x2, Final Tashahhud, Durood & Tasleem': 'റക്അത്ത് 3: എഴുന്നേൽക്കുക, ഫാത്തിഹ മാത്രം (പതുക്കെ), റുകൂഅ്, സുജൂദ് x2, അവസാന അത്തഹിയ്യാത്ത്, സ്വലാത്ത് & സലാം',
+  'Live Compass Active': 'കോമ്പസ് സജീവം',
+  'Phone Compass Not Active': 'ഫോൺ കോമ്പസ് പ്രവർത്തനരഹിതം',
+  'Tap below to enable motion sensors (Safari/Chrome on phone).': 'സെൻസറുകൾ പ്രവർത്തിപ്പിക്കാൻ താഴെ ടാപ്പ് ചെയ്യുക (സഫാരി/ക്രോം).',
+  'Enable Phone Compass': 'ഫോൺ കോമ്പസ് ഓണാക്കുക',
+  'Sensor access requested!': 'സെൻസർ അനുമതി അഭ്യർത്ഥിച്ചു!',
+  'Sensor permission denied or unsupported.': 'സെൻസർ അനുമതി നിഷേധിച്ചു അല്ലെങ്കിൽ പിന്തുണയ്ക്കുന്നില്ല.',
+  'Web compass requires HTTPS (e.g. Vercel) and device motion permission.': 'വെബ് കോമ്പസിന് HTTPS (ഉദാ: Vercel) ഉം സെൻസർ അനുമതിയും ആവശ്യമാണ്.',
 };

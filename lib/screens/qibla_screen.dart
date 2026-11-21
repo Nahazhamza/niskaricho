@@ -306,6 +306,8 @@ class _QiblaScreenState extends State<QiblaScreen> {
           behavior: HitTestBehavior.opaque,
           onTap: () async {
             await requestWebCompassPermission();
+            _compassSub?.cancel();
+            _initCompass();
           },
           onPanUpdate: _hasSensor
               ? null
@@ -322,21 +324,14 @@ class _QiblaScreenState extends State<QiblaScreen> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Compass Dial rotating with heading
-                  TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 0, end: heading),
-                    duration: const Duration(milliseconds: 180),
-                    curve: Curves.easeOutCubic,
-                    builder: (_, currentH, _) {
-                      return CustomPaint(
-                        size: const Size(290, 290),
-                        painter: _QiblaCompassPainter(
-                          heading: currentH,
-                          qiblaBearing: qiblaBearing,
-                          isFacing: isFacing,
-                        ),
-                      );
-                    },
+                  // Real-time Compass Dial directly rendered at 60fps
+                  CustomPaint(
+                    size: const Size(290, 290),
+                    painter: _QiblaCompassPainter(
+                      heading: heading,
+                      qiblaBearing: qiblaBearing,
+                      isFacing: isFacing,
+                    ),
                   ),
                   // Top phone alignment pointer (fixed at 12 o'clock)
                   Positioned(
@@ -400,8 +395,88 @@ class _QiblaScreenState extends State<QiblaScreen> {
             ),
           ),
         ),
-        if (!_hasSensor) ...[
-          const SizedBox(height: 12),
+        if (_hasSensor)
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.emerald.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.emerald.withValues(alpha: 0.5)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.sensors, size: 13, color: AppColors.emerald),
+                const SizedBox(width: 6),
+                Text(
+                  tr('Live Compass Active'),
+                  style: const TextStyle(fontSize: 11, color: AppColors.emerald, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          )
+        else ...[
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.cyan.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.cyan.withValues(alpha: 0.4)),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.screen_rotation, size: 18, color: AppColors.cyan),
+                    const SizedBox(width: 8),
+                    Text(
+                      tr('Phone Compass Not Active'),
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.cyan, fontSize: 13),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  tr('Tap below to enable motion sensors (Safari/Chrome on phone).'),
+                  style: const TextStyle(fontSize: 11, color: AppColors.cream),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.cyan,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  ),
+                  onPressed: () async {
+                    final granted = await requestWebCompassPermission();
+                    _compassSub?.cancel();
+                    _initCompass();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            granted
+                                ? tr('Sensor access requested!')
+                                : tr('Sensor permission denied or unsupported.'),
+                          ),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.compass_calibration, size: 18),
+                  label: Text(
+                    tr('Enable Phone Compass'),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -508,7 +583,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
           Text(
             _hasSensor
                 ? tr('Keep phone flat for best accuracy.')
-                : tr('Computers lack compass sensors. Use controls or open on phone.'),
+                : tr('Web compass requires HTTPS (e.g. Vercel) and device motion permission.'),
             style: t.bodySmall?.copyWith(color: AppColors.muted, fontSize: 11),
             textAlign: TextAlign.center,
           ),

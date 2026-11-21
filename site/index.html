@@ -43,6 +43,67 @@
 
   <title>niskaricho</title>
   <link rel="manifest" href="manifest.json">
+  <script>
+    window.__requestCompassPermission = async function() {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          const res = await DeviceOrientationEvent.requestPermission();
+          if (res === 'granted' && window.__startCompassHandler) {
+            window.__startCompassHandler();
+          }
+          return res === 'granted';
+        } catch (e) {
+          console.warn('Compass permission error:', e);
+          return false;
+        }
+      }
+      if (window.__startCompassHandler) {
+        window.__startCompassHandler();
+      }
+      return true;
+    };
+
+    window.__compassCallbacks = [];
+    window.__startCompassHandler = function() {
+      function onOrientation(e) {
+        let heading = null;
+        if (typeof e.webkitCompassHeading === 'number' && !isNaN(e.webkitCompassHeading)) {
+          heading = e.webkitCompassHeading;
+        } else if (typeof e.alpha === 'number' && !isNaN(e.alpha)) {
+          heading = (360.0 - e.alpha) % 360.0;
+          const angle = (window.screen && window.screen.orientation && window.screen.orientation.angle) || window.orientation || 0;
+          heading = (heading + angle) % 360.0;
+        }
+        if (heading !== null && !isNaN(heading)) {
+          heading = (heading % 360.0 + 360.0) % 360.0;
+          for (let i = 0; i < window.__compassCallbacks.length; i++) {
+            try { window.__compassCallbacks[i](heading); } catch(err) {}
+          }
+        }
+      }
+
+      window.removeEventListener('deviceorientationabsolute', onOrientation);
+      window.removeEventListener('deviceorientation', onOrientation);
+      if ('ondeviceorientationabsolute' in window) {
+        window.addEventListener('deviceorientationabsolute', onOrientation, true);
+      }
+      window.addEventListener('deviceorientation', onOrientation, true);
+    };
+
+    window.__startCompass = function(callback) {
+      window.__compassCallbacks.push(callback);
+      window.__startCompassHandler();
+      return function() {
+        const idx = window.__compassCallbacks.indexOf(callback);
+        if (idx !== -1) window.__compassCallbacks.splice(idx, 1);
+      };
+    };
+
+    // Auto-listen if permission is not required (e.g. Android Chrome)
+    if (typeof DeviceOrientationEvent === 'undefined' || typeof DeviceOrientationEvent.requestPermission !== 'function') {
+      window.__startCompassHandler();
+    }
+  </script>
 </head>
 <body>
   <!--

@@ -885,4 +885,11 @@ const arStrings = <String, String>{
   'Rak\'ah 1: Fatiha + Surah aloud, Ruku, Sujood x2': 'الركعة ١: الفاتحة وسورة جهراً، الركوع، السجود مرتين',
   'Rak\'ah 2: Fatiha + Surah aloud, Ruku, Sujood x2, First Tashahhud (sitting)': 'الركعة ٢: الفاتحة وسورة جهراً، الركوع، السجود مرتين، التشهد الأول',
   'Rak\'ah 3: Stand up, Fatiha only (silent), Ruku, Sujood x2, Final Tashahhud, Durood & Tasleem': 'الركعة ٣: القيام، الفاتحة فقط سراً، الركوع، السجود مرتين، التشهد الأخير والصلاة والسلام',
+  'Live Compass Active': 'البوصلة تعمل مباشرة',
+  'Phone Compass Not Active': 'بوصلة الهاتف غير نشطة',
+  'Tap below to enable motion sensors (Safari/Chrome on phone).': 'اضغط أدناه لتفعيل مستشعرات الحركة (سفاري/كروم).',
+  'Enable Phone Compass': 'تفعيل بوصلة الهاتف',
+  'Sensor access requested!': 'تم طلب إذن المستشعر!',
+  'Sensor permission denied or unsupported.': 'تم رفض إذن المستشعر أو غير مدعوم.',
+  'Web compass requires HTTPS (e.g. Vercel) and device motion permission.': 'تتطلب بوصلة الويب HTTPS (مثل Vercel) وإذن حركة الجهاز.',
 };
