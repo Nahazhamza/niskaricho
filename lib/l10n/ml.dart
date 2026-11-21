@@ -893,4 +893,12 @@ const mlStrings = <String, String>{
   'Sensor access requested!': 'സെൻസർ അനുമതി അഭ്യർത്ഥിച്ചു!',
   'Sensor permission denied or unsupported.': 'സെൻസർ അനുമതി നിഷേധിച്ചു അല്ലെങ്കിൽ പിന്തുണയ്ക്കുന്നില്ല.',
   'Web compass requires HTTPS (e.g. Vercel) and device motion permission.': 'വെബ് കോമ്പസിന് HTTPS (ഉദാ: Vercel) ഉം സെൻസർ അനുമതിയും ആവശ്യമാണ്.',
+  'Compass flipped 180° (calibrated for your phone).': 'കോമ്പസ് 180° തിരിച്ചു (കാലിബ്രേറ്റ് ചെയ്തു).',
+  'Compass restored to standard orientation.': 'കോമ്പസ് സാധാരണ രീതിയിലേക്ക് മാറ്റി.',
+  'Flipped 180° (Active)': '180° തിരിച്ചിരിക്കുന്നു (സജീവം)',
+  'Flip 180° (Calibrate)': '180° തിരിക്കുക (കാലിബ്രേറ്റ്)',
+  'Flipped 180° (Tap to restore)': '180° തിരിച്ചിരിക്കുന്നു (പഴയപടിയാക്കാൻ ടാപ്പ് ചെയ്യുക)',
+  'Flip 180° if opposite': 'ദിശ എതിരാണെങ്കിൽ 180° തിരിക്കുക',
+  'Compass flipped 180°. Keep phone flat.': 'കോമ്പസ് 180° തിരിച്ചു. ഫോൺ നേരെ പിടിക്കുക.',
+  'If pointing opposite to your prayer direction, tap "Flip 180°" to calibrate.': 'നിസ്കാര ദിശയ്ക്ക് എതിരായാണ് കാണിക്കുന്നതെങ്കിൽ, "180° തിരിക്കുക" ടാപ്പ് ചെയ്യുക.',
 };

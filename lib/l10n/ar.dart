@@ -892,4 +892,12 @@ const arStrings = <String, String>{
   'Sensor access requested!': 'تم طلب إذن المستشعر!',
   'Sensor permission denied or unsupported.': 'تم رفض إذن المستشعر أو غير مدعوم.',
   'Web compass requires HTTPS (e.g. Vercel) and device motion permission.': 'تتطلب بوصلة الويب HTTPS (مثل Vercel) وإذن حركة الجهاز.',
+  'Compass flipped 180° (calibrated for your phone).': 'تم عكس البوصلة ١٨٠ درجة (معايرة).',
+  'Compass restored to standard orientation.': 'تمت استعادة الاتجاه الافتراضي للبوصلة.',
+  'Flipped 180° (Active)': 'معكوس ١٨٠ درجة (نشط)',
+  'Flip 180° (Calibrate)': 'عكس ١٨٠ درجة (معايرة)',
+  'Flipped 180° (Tap to restore)': 'معكوس ١٨٠ درجة (اضغط للاستعادة)',
+  'Flip 180° if opposite': 'اقلب ١٨٠ درجة إذا كان العكس',
+  'Compass flipped 180°. Keep phone flat.': 'تم عكس البوصلة ١٨٠ درجة. حافظ على استواء الهاتف.',
+  'If pointing opposite to your prayer direction, tap "Flip 180°" to calibrate.': 'إذا كانت تشير عكس اتجاه القبلة، اضغط على "عكس ١٨٠ درجة" للمعايرة.',
 };

@@ -70,7 +70,23 @@
         if (typeof e.webkitCompassHeading === 'number' && !isNaN(e.webkitCompassHeading)) {
           heading = e.webkitCompassHeading;
         } else if (typeof e.alpha === 'number' && !isNaN(e.alpha)) {
-          heading = (360.0 - e.alpha) % 360.0;
+          var beta = e.beta || 0;
+          var gamma = e.gamma || 0;
+          if (Math.abs(beta) < 25 && Math.abs(gamma) < 25) {
+            heading = (360.0 - e.alpha) % 360.0;
+          } else {
+            var degtorad = Math.PI / 180;
+            var _x = beta * degtorad;
+            var _y = gamma * degtorad;
+            var _z = e.alpha * degtorad;
+            var cX = Math.cos(_x), cY = Math.cos(_y), cZ = Math.cos(_z);
+            var sX = Math.sin(_x), sY = Math.sin(_y), sZ = Math.sin(_z);
+            var Vx = -cZ * sY - sZ * sX * cY;
+            var Vy = -sZ * sY + cZ * sX * cY;
+            var headingRad = Math.atan2(Vx, Vy);
+            if (headingRad < 0) headingRad += 2 * Math.PI;
+            heading = headingRad * (180 / Math.PI);
+          }
           const angle = (window.screen && window.screen.orientation && window.screen.orientation.angle) || window.orientation || 0;
           heading = (heading + angle) % 360.0;
         }

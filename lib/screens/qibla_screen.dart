@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/tr.dart';
 import '../services/compass/compass_stream.dart';
@@ -43,12 +44,40 @@ class _QiblaScreenState extends State<QiblaScreen> {
   // Manual rotation angle when sensors are unavailable.
   double _manualAngle = 0.0;
   int _viewMode = 0; // 0: Compass, 1: Map
+  bool _invertHeading = false;
 
   @override
   void initState() {
     super.initState();
+    _loadInvertPref();
     _initLocation();
     _initCompass();
+  }
+
+  Future<void> _loadInvertPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() => _invertHeading = prefs.getBool('qibla_compass_inverted') ?? false);
+    }
+  }
+
+  Future<void> _toggleInvertHeading() async {
+    final newVal = !_invertHeading;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('qibla_compass_inverted', newVal);
+    if (mounted) {
+      setState(() => _invertHeading = newVal);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            newVal
+                ? tr('Compass flipped 180° (calibrated for your phone).')
+                : tr('Compass restored to standard orientation.'),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   @override
@@ -115,8 +144,9 @@ class _QiblaScreenState extends State<QiblaScreen> {
           if (!mounted) return;
           if (heading != null) {
             final normalized = (heading % 360.0 + 360.0) % 360.0;
+            final effective = _invertHeading ? (normalized + 180.0) % 360.0 : normalized;
             final qBearing = _qiblaBearing;
-            final isFacing = qBearing != null && QiblaService.isFacingQibla(normalized, qBearing);
+            final isFacing = qBearing != null && QiblaService.isFacingQibla(effective, qBearing);
 
             if (isFacing && !_wasFacingQibla) {
               HapticFeedback.heavyImpact();
@@ -142,7 +172,8 @@ class _QiblaScreenState extends State<QiblaScreen> {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final bearing = _qiblaBearing;
-    final effectiveHeading = _hasSensor ? _heading : _manualAngle;
+    final rawHeading = _hasSensor ? _heading : _manualAngle;
+    final effectiveHeading = _invertHeading ? ((rawHeading + 180.0) % 360.0) : rawHeading;
     final isFacing = bearing != null && QiblaService.isFacingQibla(effectiveHeading, bearing);
     final offset = bearing != null ? QiblaService.turnOffset(effectiveHeading, bearing) : 0.0;
 
@@ -150,6 +181,12 @@ class _QiblaScreenState extends State<QiblaScreen> {
       appBar: AppBar(
         title: Text(tr('🕋 Qibla Finder')),
         actions: [
+          IconButton(
+            icon: Icon(_invertHeading ? Icons.swap_vertical_circle : Icons.swap_vertical_circle_outlined),
+            tooltip: _invertHeading ? tr('Flipped 180° (Active)') : tr('Flip 180° (Calibrate)'),
+            color: _invertHeading ? AppColors.gold : null,
+            onPressed: _toggleInvertHeading,
+          ),
           IconButton(
             icon: Icon(_viewMode == 0 ? Icons.map_outlined : Icons.explore_outlined),
             tooltip: _viewMode == 0 ? tr('Map') : tr('Compass'),
@@ -395,7 +432,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
             ),
           ),
         ),
-        if (_hasSensor)
+        if (_hasSensor) ...[
           Container(
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -415,8 +452,33 @@ class _QiblaScreenState extends State<QiblaScreen> {
                 ),
               ],
             ),
-          )
-        else ...[
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: ActionChip(
+              avatar: Icon(
+                Icons.swap_vert,
+                size: 16,
+                color: _invertHeading ? AppColors.gold : AppColors.cyan,
+              ),
+              label: Text(
+                _invertHeading ? tr('Flipped 180° (Tap to restore)') : tr('Flip 180° if opposite'),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: _invertHeading ? AppColors.gold : AppColors.cream,
+                ),
+              ),
+              backgroundColor: _invertHeading
+                  ? AppColors.gold.withValues(alpha: 0.18)
+                  : Colors.white.withValues(alpha: 0.06),
+              side: BorderSide(
+                color: _invertHeading ? AppColors.gold : Colors.white.withValues(alpha: 0.15),
+              ),
+              onPressed: _toggleInvertHeading,
+            ),
+          ),
+        ] else ...[
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             padding: const EdgeInsets.all(12),
@@ -582,7 +644,9 @@ class _QiblaScreenState extends State<QiblaScreen> {
           const SizedBox(height: 6),
           Text(
             _hasSensor
-                ? tr('Keep phone flat for best accuracy.')
+                ? (_invertHeading
+                    ? tr('Compass flipped 180°. Keep phone flat.')
+                    : tr('If pointing opposite to your prayer direction, tap "Flip 180°" to calibrate.'))
                 : tr('Web compass requires HTTPS (e.g. Vercel) and device motion permission.'),
             style: t.bodySmall?.copyWith(color: AppColors.muted, fontSize: 11),
             textAlign: TextAlign.center,
