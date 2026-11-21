@@ -128,7 +128,7 @@ class DemoBackend {
 
   final circles = <Circle>[
     const Circle(id: 'c1', name: 'Family', inviteCode: '730264', requirePhoto: false, createdBy: 'f2'),
-    const Circle(id: 'c2', name: 'Hostel Room 4', inviteCode: '482915', requirePhoto: true, createdBy: me),
+    const Circle(id: 'c2', name: 'Hostel Room 4', inviteCode: '482915', requirePhoto: false, createdBy: me),
   ];
   final members = <String, List<String>>{
     'c1': [me, 'f1', 'f2', 'f3', 'f4'],

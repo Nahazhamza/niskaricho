@@ -913,4 +913,5 @@ const arStrings = <String, String>{
   'Notifications enabled! Test alert sent.': 'تم تفعيل الإشعارات! تم إرسال تنبيه تجريبي.',
   'Test alert sent! Check your notification center.': 'تم إرسال تنبيه تجريبي! تحقق من مركز الإشعارات.',
   'Current GPS Location': 'موقع GPS الحالي',
+  'Prayer notifications are active!': 'تنبيهات الصلاة نشطة الآن!',
 };

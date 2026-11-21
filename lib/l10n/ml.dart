@@ -914,4 +914,5 @@ const mlStrings = <String, String>{
   'Notifications enabled! Test alert sent.': 'അറിയിപ്പുകൾ ഓണാക്കി! ടെസ്റ്റ് അറിയിപ്പ് അയച്ചു.',
   'Test alert sent! Check your notification center.': 'ടെസ്റ്റ് അറിയിപ്പ് അയച്ചു! നോട്ടിഫിക്കേഷൻ സെന്റർ പരിശോധിക്കുക.',
   'Current GPS Location': 'തത്സമയ ജി.പി.എസ് സ്ഥാനം',
+  'Prayer notifications are active!': 'നിസ്കാര അറിയിപ്പുകൾ സജീവമാക്കി!',
 };

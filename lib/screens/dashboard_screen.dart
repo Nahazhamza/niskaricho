@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../l10n/tr.dart';
 import '../models/prayer_model.dart';
 import '../models/progress_model.dart';
+import '../services/compass/compass_stream.dart';
 import '../services/notification_service.dart';
 import '../services/supabase_service.dart';
 import '../services/hijri.dart';
@@ -15,7 +16,6 @@ import '../widgets/fx.dart';
 import '../widgets/islamic_icons.dart';
 import 'focus_timer_screen.dart';
 import 'learn/learn_namaz_hub_screen.dart';
-import 'photo_proof_screen.dart';
 import 'qibla_screen.dart';
 import 'tasbih_screen.dart';
 
@@ -128,13 +128,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           .push<PrayerLog>(MaterialPageRoute(fullscreenDialog: true, builder: (_) => FocusTimerScreen(log: log)));
       if (done != null) {
         await NotificationService.instance.cancelWarning(p);
-        if (await _db.anyCircleRequiresPhoto() && mounted) {
-          final withPhoto = await Navigator.of(context)
-              .push<bool>(MaterialPageRoute(fullscreenDialog: true, builder: (_) => PhotoProofScreen(log: done!)));
-          if (withPhoto == true) {
-            done = (await _db.myLogsFor(done.prayerDate)).firstWhere((l) => l.id == done!.id, orElse: () => done!);
-          }
-        }
         await _load();
         if (!mounted) return;
         final xp = xpForLog(done);
@@ -334,16 +327,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       onPressed: () async {
                         final messenger = ScaffoldMessenger.of(context);
                         final granted = await NotificationService.instance.requestPermission();
-                        await NotificationService.instance.testNotification();
                         if (!mounted) return;
                         messenger.showSnackBar(
                           SnackBar(
                             content: Text(
                               granted
-                                  ? tr('Notifications enabled! Test alert sent.')
-                                  : tr('Test alert sent! Check your notification center.'),
+                                  ? tr('Prayer notifications are active!')
+                                  : tr('Notification permission denied or blocked in browser.'),
                             ),
-                            duration: const Duration(seconds: 3),
+                            duration: const Duration(seconds: 2),
                           ),
                         );
                       },
@@ -391,7 +383,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     children: [
       Expanded(
         child: Pressable(
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const QiblaScreen())),
+          onTap: () {
+            requestWebCompassPermission();
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const QiblaScreen()));
+          },
           child: GlassCard(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
             child: Row(

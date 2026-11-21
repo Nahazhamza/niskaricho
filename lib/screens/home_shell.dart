@@ -241,7 +241,6 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     return Scaffold(
       body: Column(
         children: [
-          if (_db.isDemo) const _DemoBanner(),
           if (_tzWarning != null)
             Material(
               color: const Color(0xFF4A1F1F),
@@ -292,24 +291,4 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       ),
     );
   }
-}
-
-class _DemoBanner extends StatelessWidget {
-  const _DemoBanner();
-
-  @override
-  Widget build(BuildContext context) => Material(
-    color: const Color(0xFF3B2F12),
-    child: SafeArea(
-      bottom: false,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Text(
-          tr('Demo: sample family in Dubai and Kerala. Times are for your location. Focus timer is 20 seconds.'),
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 12, color: Color(0xFFF0CF7A)),
-        ),
-      ),
-    ),
-  );
 }

@@ -23,7 +23,7 @@ class QiblaScreen extends StatefulWidget {
   State<QiblaScreen> createState() => _QiblaScreenState();
 }
 
-class _QiblaScreenState extends State<QiblaScreen> {
+class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStateMixin {
   final _db = SupabaseService.instance;
   final _calc = PrayerCalculatorService();
 
@@ -46,12 +46,40 @@ class _QiblaScreenState extends State<QiblaScreen> {
   int _viewMode = 0; // 0: Compass, 1: Map
   bool _invertHeading = false;
 
+  late final AnimationController _introController;
+  late final Animation<double> _scaleAnim;
+  late final Animation<double> _sweepAnim;
+
   @override
   void initState() {
     super.initState();
+    _introController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    );
+    _scaleAnim = CurvedAnimation(
+      parent: _introController,
+      curve: Curves.easeOutBack,
+    );
+    _sweepAnim = Tween<double>(begin: -math.pi, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _introController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+    _introController.forward();
+
     _loadInvertPref();
     _initLocation();
     _initCompass();
+
+    // Auto-request motion & orientation on both iOS & Android without requiring extra clicks
+    requestWebCompassPermission().then((_) {
+      if (mounted) {
+        _compassSub?.cancel();
+        _initCompass();
+      }
+    });
   }
 
   Future<void> _loadInvertPref() async {
@@ -82,6 +110,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
 
   @override
   void dispose() {
+    _introController.dispose();
     _compassSub?.cancel();
     super.dispose();
   }
@@ -364,21 +393,48 @@ class _QiblaScreenState extends State<QiblaScreen> {
                   });
                 },
           child: Center(
-            child: SizedBox(
-              width: 290,
-              height: 290,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Real-time Compass Dial directly rendered at 60fps
-                  CustomPaint(
-                    size: const Size(290, 290),
-                    painter: _QiblaCompassPainter(
-                      heading: heading,
-                      qiblaBearing: qiblaBearing,
-                      isFacing: isFacing,
-                    ),
+            child: AnimatedBuilder(
+              animation: _introController,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: _scaleAnim.value,
+                  child: Transform.rotate(
+                    angle: _sweepAnim.value,
+                    child: child,
                   ),
+                );
+              },
+              child: SizedBox(
+                width: 290,
+                height: 290,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Dashing pulsing aura ring
+                    Container(
+                      width: 284,
+                      height: 284,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: (isFacing ? AppColors.onTime : AppColors.gold)
+                                .withValues(alpha: isFacing ? 0.35 : 0.15),
+                            blurRadius: isFacing ? 36 : 22,
+                            spreadRadius: isFacing ? 6 : 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Real-time Compass Dial directly rendered at 60fps
+                    CustomPaint(
+                      size: const Size(290, 290),
+                      painter: _QiblaCompassPainter(
+                        heading: heading,
+                        qiblaBearing: qiblaBearing,
+                        isFacing: isFacing,
+                      ),
+                    ),
                   // Top phone alignment pointer (fixed at 12 o'clock)
                   Positioned(
                     top: 2,
@@ -441,6 +497,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
             ),
           ),
         ),
+      ),
         if (_hasSensor) ...[
           Container(
             margin: const EdgeInsets.only(top: 8),
@@ -488,66 +545,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
             ),
           ),
         ] else ...[
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.cyan.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.cyan.withValues(alpha: 0.4)),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.screen_rotation, size: 18, color: AppColors.cyan),
-                    const SizedBox(width: 8),
-                    Text(
-                      tr('Phone Compass Not Active'),
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.cyan, fontSize: 13),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  tr('Tap below to enable motion sensors (Safari/Chrome on phone).'),
-                  style: const TextStyle(fontSize: 11, color: AppColors.cream),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10),
-                FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.cyan,
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                  onPressed: () async {
-                    final granted = await requestWebCompassPermission();
-                    _compassSub?.cancel();
-                    _initCompass();
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            granted
-                                ? tr('Sensor access requested!')
-                                : tr('Sensor permission denied or unsupported.'),
-                          ),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    }
-                  },
-                  icon: const Icon(Icons.compass_calibration, size: 18),
-                  label: Text(
-                    tr('Enable Phone Compass'),
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

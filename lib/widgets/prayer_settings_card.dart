@@ -189,48 +189,27 @@ class _PrayerSettingsCardState extends State<PrayerSettingsCard> {
             style: t.bodySmall?.copyWith(fontSize: 12),
           ),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  icon: const Icon(Icons.notifications_active, size: 18),
-                  label: Text(tr('Enable Notifications'), style: const TextStyle(fontSize: 12)),
-                  onPressed: () async {
-                    final messenger = ScaffoldMessenger.of(context);
-                    final granted = await NotificationService.instance.requestPermission();
-                    if (!mounted) return;
-                    messenger.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          granted
-                              ? tr('Notifications enabled successfully!')
-                              : tr('Notification permission denied or blocked in browser.'),
-                        ),
-                        duration: const Duration(seconds: 3),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: FilledButton.tonalIcon(
-                  icon: const Icon(Icons.send_outlined, size: 18),
-                  label: Text(tr('Test Notification'), style: const TextStyle(fontSize: 12)),
-                  onPressed: () async {
-                    final messenger = ScaffoldMessenger.of(context);
-                    await NotificationService.instance.testNotification();
-                    if (!mounted) return;
-                    messenger.showSnackBar(
-                      SnackBar(
-                        content: Text(tr('Test notification sent! Check your notification center.')),
-                        duration: const Duration(seconds: 3),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.notifications_active, size: 18),
+              label: Text(tr('Enable Notifications'), style: const TextStyle(fontSize: 13)),
+              onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final granted = await NotificationService.instance.requestPermission();
+                if (!mounted) return;
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      granted
+                          ? tr('Notifications enabled successfully!')
+                          : tr('Notification permission denied or blocked in browser.'),
+                    ),
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
