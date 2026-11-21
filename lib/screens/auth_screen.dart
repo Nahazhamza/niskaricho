@@ -21,6 +21,29 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _busy = false;
   String? _error;
 
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      if (SupabaseService.instance.isDemo) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(tr('Demo mode active: Signed in as demo user.')),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+      await SupabaseService.instance.signInWithGoogle(inviteCode: _invite.text.trim());
+    } catch (e) {
+      setState(() => _error = tr('That did not work. Check the email or code and try again.'));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   Future<void> _submit() async {
     setState(() {
       _busy = true;
@@ -65,7 +88,58 @@ class _AuthScreenState extends State<AuthScreen> {
                   textAlign: TextAlign.center,
                   style: t.bodySmall,
                 ),
-                const SizedBox(height: 36),
+                const SizedBox(height: 32),
+
+                // 1-Click Google Sign-In
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF1F1F1F),
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      side: const BorderSide(color: Color(0xFFE0E0E0)),
+                    ),
+                  ),
+                  onPressed: _busy ? null : _signInWithGoogle,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.network(
+                        'https://www.gstatic.com/images/branding/product/2x/googleg_48dp.png',
+                        height: 20,
+                        width: 20,
+                        errorBuilder: (_, _, _) => const Icon(Icons.account_circle, size: 20, color: Colors.blue),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        tr('Continue with Google'),
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: AppColors.sand.withValues(alpha: 0.2))),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        tr('or continue with email'),
+                        style: t.bodySmall?.copyWith(fontSize: 12, color: AppColors.muted),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: AppColors.sand.withValues(alpha: 0.2))),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
                 TextField(
                   controller: _email,
                   enabled: !_codeSent,

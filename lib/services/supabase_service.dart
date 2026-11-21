@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart' show ImageProvider, MemoryImage, AssetImage, NetworkImage, ValueNotifier;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -133,6 +133,16 @@ class SupabaseService {
     shouldCreateUser: true,
     data: (inviteCode?.isNotEmpty ?? false) ? {'invite_code': inviteCode} : null,
   );
+
+  /// 1-click Google OAuth sign-in.
+  Future<void> signInWithGoogle({String? inviteCode}) async {
+    if (isDemo) return;
+    await _db.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: kIsWeb ? null : 'io.supabase.niskaricho://login-callback/',
+      queryParams: (inviteCode?.isNotEmpty ?? false) ? {'invite_code': inviteCode!} : null,
+    );
+  }
 
   Future<void> verifyEmailOtp(String email, String code) =>
       _db.auth.verifyOTP(email: email, token: code, type: OtpType.email);

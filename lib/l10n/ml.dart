@@ -915,4 +915,7 @@ const mlStrings = <String, String>{
   'Test alert sent! Check your notification center.': 'ടെസ്റ്റ് അറിയിപ്പ് അയച്ചു! നോട്ടിഫിക്കേഷൻ സെന്റർ പരിശോധിക്കുക.',
   'Current GPS Location': 'തത്സമയ ജി.പി.എസ് സ്ഥാനം',
   'Prayer notifications are active!': 'നിസ്കാര അറിയിപ്പുകൾ സജീവമാക്കി!',
+  'Continue with Google': 'ഗൂഗിൾ വഴി തുടരുക',
+  'or continue with email': 'അല്ലെങ്കിൽ ഇമെയിൽ വഴി തുടരുക',
+  'Demo mode active: Signed in as demo user.': 'ഡെമോ മോഡ് സജീവമാണ്: ഡെമോ ഉപയോക്താവായി ലോഗിൻ ചെയ്തു.',
 };

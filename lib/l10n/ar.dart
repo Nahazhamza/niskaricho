@@ -914,4 +914,7 @@ const arStrings = <String, String>{
   'Test alert sent! Check your notification center.': 'تم إرسال تنبيه تجريبي! تحقق من مركز الإشعارات.',
   'Current GPS Location': 'موقع GPS الحالي',
   'Prayer notifications are active!': 'تنبيهات الصلاة نشطة الآن!',
+  'Continue with Google': 'المتابعة باستخدام Google',
+  'or continue with email': 'أو المتابعة عبر البريد الإلكتروني',
+  'Demo mode active: Signed in as demo user.': 'الوضع التجريبي نشط: تم تسجيل الدخول كمستخدم تجريبي.',
 };
