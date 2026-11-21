@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../l10n/tr.dart';
@@ -31,6 +32,7 @@ class _QiblaMapViewState extends State<QiblaMapView> {
 
   // Zoom level: 16 is neighborhood / street & building level.
   double _zoom = 16.0;
+  double _baseZoom = 16.0;
   Offset _panOffset = Offset.zero;
   bool _satellite = false;
 
@@ -38,6 +40,23 @@ class _QiblaMapViewState extends State<QiblaMapView> {
   void dispose() {
     _tileManager.dispose();
     super.dispose();
+  }
+
+  void _onScaleStart(ScaleStartDetails details) {
+    _baseZoom = _zoom;
+  }
+
+  void _onScaleUpdate(ScaleUpdateDetails details) {
+    setState(() {
+      // Panning translation (1 finger or 2 fingers)
+      _panOffset += details.focalPointDelta;
+
+      // Two-finger pinch-to-zoom
+      if (details.scale != 1.0) {
+        final zoomDelta = math.log(details.scale) / math.ln2;
+        _zoom = (_baseZoom + zoomDelta).clamp(3.0, 18.0);
+      }
+    });
   }
 
   void _zoomIn() {
@@ -64,27 +83,39 @@ class _QiblaMapViewState extends State<QiblaMapView> {
 
         return Stack(
           children: [
-            // Interactive pannable map area
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onPanUpdate: (details) {
-                setState(() => _panOffset += details.delta);
+            // Interactive pannable & pinch-to-zoom map area
+            Listener(
+              onPointerSignal: (event) {
+                if (event is PointerScrollEvent) {
+                  setState(() {
+                    if (event.scrollDelta.dy < 0) {
+                      _zoom = (_zoom + 0.5).clamp(3.0, 18.0);
+                    } else if (event.scrollDelta.dy > 0) {
+                      _zoom = (_zoom - 0.5).clamp(3.0, 18.0);
+                    }
+                  });
+                }
               },
-              child: ClipRect(
-                child: CustomPaint(
-                  size: size,
-                  painter: _TileMapPainter(
-                    tileManager: _tileManager,
-                    lat: widget.latitude,
-                    lng: widget.longitude,
-                    zoom: _zoom.floor(),
-                    centerOffset: _panOffset,
-                    satellite: _satellite,
-                  ),
-                  foregroundPainter: _QiblaRayPainter(
-                    center: center,
-                    bearing: widget.bearing,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onScaleStart: _onScaleStart,
+                onScaleUpdate: _onScaleUpdate,
+                child: ClipRect(
+                  child: CustomPaint(
                     size: size,
+                    painter: _TileMapPainter(
+                      tileManager: _tileManager,
+                      lat: widget.latitude,
+                      lng: widget.longitude,
+                      zoom: _zoom.floor(),
+                      centerOffset: _panOffset,
+                      satellite: _satellite,
+                    ),
+                    foregroundPainter: _QiblaRayPainter(
+                      center: center,
+                      bearing: widget.bearing,
+                      size: size,
+                    ),
                   ),
                 ),
               ),
