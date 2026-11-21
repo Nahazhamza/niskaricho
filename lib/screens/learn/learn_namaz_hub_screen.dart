@@ -85,12 +85,19 @@ class LearnNamazHubScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 14),
 
-                    // Quick Stats Row
+                    // Quick Stats 2x2 Grid (Responsive for all languages)
                     Row(
                       children: [
                         _quickStat('💧 ${tr('Wudu')}', prog.completedWudu ? tr('Completed') : tr('In Progress'), prog.completedWudu ? AppColors.emerald : AppColors.gold),
+                        const SizedBox(width: 8),
                         _quickStat('🕋 ${tr('Prayers')}', '${prog.completedPrayers.length}/5', AppColors.sandLight),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
                         _quickStat('📿 ${tr('Recitations')}', '${prog.masteredRecitations.length}/${LearnNamazContent.recitations.length}', AppColors.electricPurple),
+                        const SizedBox(width: 8),
                         _quickStat('⚡ ${tr('Learning XP')}', '+${prog.xpEarned}', AppColors.gold),
                       ],
                     ),
@@ -126,18 +133,27 @@ class LearnNamazHubScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
+                            Wrap(
+                              alignment: WrapAlignment.spaceBetween,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 8,
+                              runSpacing: 4,
                               children: [
                                 Text(
                                   tr('Beginner 7-Day Path'),
-                                  style: t.titleMedium?.copyWith(color: AppColors.gold, fontWeight: FontWeight.bold),
+                                  style: t.titleMedium?.copyWith(
+                                    color: AppColors.gold,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    height: 1.35,
+                                  ),
                                 ),
-                                const Spacer(),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                                   decoration: BoxDecoration(
                                     color: AppColors.gold.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: AppColors.gold.withValues(alpha: 0.5)),
                                   ),
                                   child: Text(
                                     '${prog.beginnerDayCompleted}/7 ${tr('Done')}',
@@ -149,7 +165,7 @@ class LearnNamazHubScreen extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               tr('Gentle step-by-step roadmap from Wudu to your first full prayer.'),
-                              style: t.bodySmall?.copyWith(fontSize: 11.5),
+                              style: t.bodySmall?.copyWith(fontSize: 11.5, height: 1.35),
                             ),
                           ],
                         ),
@@ -231,18 +247,29 @@ class LearnNamazHubScreen extends StatelessWidget {
 
   Widget _quickStat(String label, String value, Color color) => Expanded(
     child: Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        color: AppColors.forestDeep.withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: const TextStyle(fontSize: 10, color: AppColors.muted), overflow: TextOverflow.ellipsis),
-          const SizedBox(height: 2),
-          Text(value, style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: color)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 11, color: AppColors.sand, height: 1.2),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 3),
+          Text(
+            value,
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: color, height: 1.2),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ],
       ),
     ),
@@ -368,38 +395,38 @@ class _CategoryHubCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: t.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: badgeColor.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: badgeColor.withValues(alpha: 0.4)),
-                        ),
-                        child: Text(
-                          badge,
-                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: badgeColor),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    title,
+                    style: t.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.5,
+                      color: AppColors.sandLight,
+                      height: 1.35,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: t.bodySmall?.copyWith(fontSize: 11.5, height: 1.35),
+                    style: t.bodySmall?.copyWith(fontSize: 11.5, height: 1.4, color: AppColors.sand),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: badgeColor.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: badgeColor.withValues(alpha: 0.45)),
+                    ),
+                    child: Text(
+                      badge,
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: badgeColor),
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 6),
-            const Icon(Icons.chevron_right, color: AppColors.muted),
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right, color: AppColors.sand, size: 20),
           ],
         ),
       ),

@@ -137,13 +137,13 @@ ThemeData buildTheme() {
       },
     ),
     textTheme: const TextTheme(
-      headlineLarge: TextStyle(color: AppColors.sandLight, fontWeight: FontWeight.w800, letterSpacing: -0.3),
-      headlineMedium: TextStyle(color: AppColors.sandLight, fontWeight: FontWeight.w700),
-      titleLarge: TextStyle(color: AppColors.sandLight, fontWeight: FontWeight.w700),
-      titleMedium: TextStyle(color: AppColors.sand, fontWeight: FontWeight.w600),
-      bodyLarge: TextStyle(color: AppColors.sandLight, height: 1.4),
-      bodyMedium: TextStyle(color: AppColors.sand, height: 1.4),
-      bodySmall: TextStyle(color: AppColors.muted, height: 1.35),
+      headlineLarge: TextStyle(color: AppColors.sandLight, fontWeight: FontWeight.w800, letterSpacing: -0.3, height: 1.3),
+      headlineMedium: TextStyle(color: AppColors.sandLight, fontWeight: FontWeight.w700, height: 1.3),
+      titleLarge: TextStyle(color: AppColors.sandLight, fontWeight: FontWeight.w700, height: 1.3),
+      titleMedium: TextStyle(color: AppColors.sand, fontWeight: FontWeight.w600, height: 1.35),
+      bodyLarge: TextStyle(color: AppColors.sandLight, height: 1.45),
+      bodyMedium: TextStyle(color: AppColors.sand, height: 1.45),
+      bodySmall: TextStyle(color: AppColors.muted, height: 1.4),
     ),
   );
 }
