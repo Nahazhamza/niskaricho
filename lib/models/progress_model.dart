@@ -19,16 +19,18 @@ const perfectDayBonus = 25;
 int levelForXp(int xp) => math.sqrt(math.max(xp, 0) / 50).floor() + 1;
 int xpForLevel(int level) => 50 * (level - 1) * (level - 1);
 
-/// Level titles: a gentle path, not a status symbol.
+/// Level badges: clear progression tiers (inspired by Google Local Guides & milestone badges).
 ({String en, String ml, String emoji}) levelTitle(int level) => switch (level) {
-  <= 1 => (en: 'Seeker', ml: 'അന്വേഷി', emoji: '🌱'),
-  2 => (en: 'Early Riser', ml: 'നേരത്തെ ഉണരുന്നവൻ', emoji: '🌅'),
-  3 => (en: 'Steadfast', ml: 'സ്ഥിരോത്സാഹി', emoji: '🪨'),
-  4 => (en: 'Devoted', ml: 'ഭക്തൻ', emoji: '🤲'),
-  5 => (en: 'Guardian of Fajr', ml: 'സുബ്ഹിന്റെ കാവൽക്കാരൻ', emoji: '🛡️'),
-  6 || 7 => (en: 'Light Bearer', ml: 'പ്രകാശവാഹകൻ', emoji: '🌙'),
-  8 || 9 => (en: 'Muhsin', ml: 'മുഹ്സിൻ', emoji: '💎'),
-  _ => (en: 'Pillar of the Circle', ml: 'സർക്കിളിന്റെ തൂൺ', emoji: '🕌'),
+  <= 1 => (en: 'Starter Tier', ml: 'സ്റ്റാർട്ടർ ടയർ', emoji: '🌱'),
+  2 => (en: 'Bronze Badge', ml: 'ബ്രോൺസ് ബാഡ്ജ്', emoji: '🥉'),
+  3 => (en: 'Silver Badge', ml: 'സിൽവർ ബാഡ്ജ്', emoji: '🥈'),
+  4 => (en: 'Gold Badge', ml: 'ഗോൾഡ് ബാഡ്ജ്', emoji: '🥇'),
+  5 => (en: 'Platinum Badge', ml: 'പ്ലാറ്റിനം ബാഡ്ജ്', emoji: '🛡️'),
+  6 => (en: 'Sapphire Badge', ml: 'സഫയർ ബാഡ്ജ്', emoji: '🔷'),
+  7 => (en: 'Emerald Badge', ml: 'എമറാൾഡ് ബാഡ്ജ്', emoji: '❇️'),
+  8 => (en: 'Diamond Badge', ml: 'ഡയമണ്ട് ബാഡ്ജ്', emoji: '💎'),
+  9 => (en: 'Master Tier', ml: 'മാസ്റ്റർ ടയർ', emoji: '👑'),
+  _ => (en: 'Legend Tier', ml: 'ലെജൻഡ് ടയർ', emoji: '🌟'),
 };
 
 class DayHistory {

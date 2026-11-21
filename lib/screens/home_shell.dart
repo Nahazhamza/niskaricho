@@ -12,6 +12,7 @@ import '../services/zones.dart';
 import 'circle_manager_screen.dart';
 import 'dashboard_screen.dart';
 import 'journey_screen.dart';
+import 'learn/learn_namaz_hub_screen.dart';
 import 'onboarding_screen.dart';
 import 'pending_screen.dart';
 
@@ -252,7 +253,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
               duration: const Duration(milliseconds: 350),
               child: KeyedSubtree(
                 key: ValueKey('$_tab-$_epoch'),
-                child: const [DashboardScreen(), CircleManagerScreen(), JourneyScreen()][_tab],
+                child: const [DashboardScreen(), LearnNamazHubScreen(), CircleManagerScreen(), JourneyScreen()][_tab],
               ),
             ),
           ),
@@ -266,6 +267,11 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
             icon: const Icon(Icons.mosque_outlined),
             selectedIcon: const Icon(Icons.mosque),
             label: tr('Today'),
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.menu_book_outlined),
+            selectedIcon: const Icon(Icons.menu_book),
+            label: tr('Learn'),
           ),
           NavigationDestination(
             icon: const Icon(Icons.groups_outlined),

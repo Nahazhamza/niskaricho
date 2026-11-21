@@ -14,7 +14,9 @@ import '../theme/app_theme.dart';
 import '../widgets/fx.dart';
 import '../widgets/islamic_icons.dart';
 import 'focus_timer_screen.dart';
+import 'learn/learn_namaz_hub_screen.dart';
 import 'photo_proof_screen.dart';
+import 'qibla_screen.dart';
 import 'tasbih_screen.dart';
 
 /// Today: the sun's path through the five prayers, a live countdown,
@@ -213,6 +215,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             const SizedBox(height: 4),
             RiseIn(index: 1, child: _quickActions(t)),
+            const SizedBox(height: 8),
+            RiseIn(
+              index: 1,
+              child: Pressable(
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LearnNamazHubScreen())),
+                child: GlassCard(
+                  glow: AppColors.emerald,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.emerald.withValues(alpha: 0.2),
+                          border: Border.all(color: AppColors.emerald.withValues(alpha: 0.5)),
+                        ),
+                        child: const Text('📖', style: TextStyle(fontSize: 20)),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  tr('Learn Namaz'),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.cream),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.cyan.withValues(alpha: 0.2),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    tr('GUIDE'),
+                                    style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.cyan),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              tr('Step-by-step prayer & Wudu guide with visual postures'),
+                              style: const TextStyle(fontSize: 11, color: AppColors.muted),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.chevron_right, size: 20, color: AppColors.muted),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(left: 4, bottom: 2),
@@ -305,31 +365,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
     children: [
       Expanded(
         child: Pressable(
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TasbihScreen())),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const QiblaScreen())),
           child: GlassCard(
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
             child: Row(
               children: [
-                const Text('📿', style: TextStyle(fontSize: 22)),
-                const SizedBox(width: 10),
-                Expanded(child: Text(tr('Tasbih after salah'), style: const TextStyle(fontSize: 14, height: 1.25))),
+                const Text('🕋', style: TextStyle(fontSize: 22)),
+                const SizedBox(width: 8),
+                Expanded(child: Text(tr('Qibla finder'), style: const TextStyle(fontSize: 13, height: 1.25))),
               ],
             ),
           ),
         ),
       ),
-      const SizedBox(width: 10),
+      const SizedBox(width: 8),
+      Expanded(
+        child: Pressable(
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TasbihScreen())),
+          child: GlassCard(
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+            child: Row(
+              children: [
+                const Text('📿', style: TextStyle(fontSize: 22)),
+                const SizedBox(width: 8),
+                Expanded(child: Text(tr('Tasbih after salah'), style: const TextStyle(fontSize: 13, height: 1.25))),
+              ],
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(width: 8),
       Expanded(
         child: GlassCard(
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
           child: Row(
             children: [
               const Text('⚡', style: TextStyle(fontSize: 22)),
-              const SizedBox(width: 10),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   tr('{n} XP\nthis week', {'n': _progress?.weekXp ?? 0}),
-                  style: const TextStyle(fontSize: 12.5, height: 1.25),
+                  style: const TextStyle(fontSize: 11.5, height: 1.25),
                 ),
               ),
             ],

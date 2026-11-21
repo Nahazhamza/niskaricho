@@ -16,6 +16,10 @@ import '../widgets/profile_form.dart';
 import '../widgets/women_card.dart';
 import 'admin_screen.dart';
 import 'language_screen.dart';
+import 'learn/learn_namaz_hub_screen.dart';
+import 'qibla_screen.dart';
+import '../models/learn_namaz_model.dart';
+import '../services/learn_namaz_service.dart';
 
 /// "Journey": level, XP, streaks, a 5-week heatmap, per-prayer strength,
 /// the badge cabinet and the Qibla direction.
@@ -44,10 +48,10 @@ class _JourneyScreenState extends State<JourneyScreen> {
       final p = await _db.myProgress();
       final prof = await _db.myProfile();
       double? q;
-      if (prof['latitude'] != null) {
-        q = adhan.Qibla.qibla(
-          adhan.Coordinates((prof['latitude'] as num).toDouble(), (prof['longitude'] as num).toDouble()),
-        );
+      final lat = (prof['latitude'] as num?)?.toDouble() ?? _db.myLocation?.latitude;
+      final lng = (prof['longitude'] as num?)?.toDouble() ?? _db.myLocation?.longitude;
+      if (lat != null && lng != null) {
+        q = adhan.Qibla.qibla(adhan.Coordinates(lat, lng));
       }
       if (mounted) {
         setState(() {
@@ -107,7 +111,27 @@ class _JourneyScreenState extends State<JourneyScreen> {
             RiseIn(index: 2, child: _heatmap(p, t)),
             RiseIn(index: 3, child: _perPrayer(p, t)),
             RiseIn(index: 4, child: _badges(p, t)),
-            if (_qibla != null) RiseIn(index: 5, child: _QiblaCard(bearing: _qibla!)),
+            RiseIn(index: 5, child: _learnNamazProgressCard(t)),
+            RiseIn(
+              index: 5,
+              child: _qibla != null
+                  ? _QiblaCard(bearing: _qibla!)
+                  : Pressable(
+                      onTap: () async {
+                        await Navigator.of(context).push(MaterialPageRoute(builder: (_) => const QiblaScreen()));
+                        _load();
+                      },
+                      child: GlassCard(
+                        glow: AppColors.gold,
+                        child: ListTile(
+                          leading: const Text('🕋', style: TextStyle(fontSize: 28)),
+                          title: Text(tr('🕋 Qibla Finder')),
+                          subtitle: Text(tr('Tap to find Qibla')),
+                          trailing: const Icon(Icons.chevron_right),
+                        ),
+                      ),
+                    ),
+            ),
             RiseIn(
               index: 5,
               child: GlassCard(
@@ -173,7 +197,26 @@ class _JourneyScreenState extends State<JourneyScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${title.emoji} ${tr(title.en)}', style: t.titleLarge),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.violet.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: AppColors.violet.withValues(alpha: 0.6)),
+                    ),
+                    child: Text(
+                      tr('Badge'),
+                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.cyan, letterSpacing: 1),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text('${title.emoji} ${tr(title.en)}', style: t.titleLarge, overflow: TextOverflow.ellipsis),
+                  ),
+                ],
+              ),
               const SizedBox(height: 10),
               NeonBar(value: p.levelProgress, colors: const [AppColors.violet, AppColors.cyan]),
               const SizedBox(height: 4),
@@ -348,6 +391,80 @@ class _JourneyScreenState extends State<JourneyScreen> {
       ],
     ),
   );
+
+  Widget _learnNamazProgressCard(TextTheme t) => ValueListenableBuilder<LearnProgress>(
+    valueListenable: LearnNamazService.instance.progress,
+    builder: (context, prog, _) => Pressable(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const LearnNamazHubScreen()),
+      ),
+      child: GlassCard(
+        glow: AppColors.cyan,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Text('📖', style: TextStyle(fontSize: 22)),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(tr('Learn Namaz Progress'), style: t.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                      Text(
+                        tr('+{n} Learning XP earned', {'n': prog.xpEarned}),
+                        style: const TextStyle(fontSize: 11, color: AppColors.gold),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: AppColors.muted),
+              ],
+            ),
+            const SizedBox(height: 12),
+            _learnStatusRow(
+              '💧 ${tr('Wudu Tutorial')}',
+              prog.completedWudu ? tr('Completed') : tr('In Progress'),
+              prog.completedWudu,
+            ),
+            const Divider(color: Colors.white10, height: 12),
+            for (final p in ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']) ...[
+              _learnStatusRow(
+                '🕌 ${tr(p[0].toUpperCase() + p.substring(1))}',
+                prog.completedPrayers.contains(p) ? tr('Completed') : tr('Not Started'),
+                prog.completedPrayers.contains(p),
+              ),
+              if (p != 'isha') const Divider(color: Colors.white10, height: 10),
+            ],
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _learnStatusRow(String label, String status, bool completed) => Row(
+    children: [
+      Text(label, style: const TextStyle(fontSize: 12.5)),
+      const Spacer(),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+        decoration: BoxDecoration(
+          color: (completed ? AppColors.emerald : Colors.white10).withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text(
+          status,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: completed ? AppColors.emerald : AppColors.muted,
+          ),
+        ),
+      ),
+    ],
+  );
 }
 
 class _Badge extends StatelessWidget {
@@ -381,41 +498,52 @@ class _QiblaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
-    return GlassCard(
-      glow: AppColors.gold,
-      child: Row(
-        children: [
-          SizedBox(
-            width: 110,
-            height: 110,
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: bearing),
-              duration: const Duration(milliseconds: 1600),
-              curve: Curves.elasticOut,
-              builder: (_, v, _) => CustomPaint(painter: _CompassPainter(v)),
+    return Pressable(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const QiblaScreen())),
+      child: GlassCard(
+        glow: AppColors.gold,
+        child: Row(
+          children: [
+            SizedBox(
+              width: 110,
+              height: 110,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: bearing),
+                duration: const Duration(milliseconds: 1600),
+                curve: Curves.elasticOut,
+                builder: (_, v, _) => CustomPaint(painter: _CompassPainter(v)),
+              ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(tr('🕋 Qibla'), style: t.titleMedium),
-                Text('ഖിബ്‌ല ദിശ', style: t.bodySmall?.copyWith(color: AppColors.gold)),
-                const SizedBox(height: 6),
-                Text(
-                  tr('{deg}° from North', {'deg': bearing.toStringAsFixed(1)}),
-                  style: t.titleLarge?.copyWith(color: AppColors.cream, fontSize: 20),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  tr('Point the top of your phone North, then turn {deg}° clockwise.', {'deg': bearing.round()}),
-                  style: t.bodySmall,
-                ),
-              ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(tr('🕋 Qibla'), style: t.titleMedium),
+                      const Spacer(),
+                      const Icon(Icons.compass_calibration_outlined, size: 18, color: AppColors.gold),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.chevron_right, size: 18, color: AppColors.muted),
+                    ],
+                  ),
+                  Text('ഖിബ്‌ല ദിശ', style: t.bodySmall?.copyWith(color: AppColors.gold)),
+                  const SizedBox(height: 6),
+                  Text(
+                    tr('{deg}° from North', {'deg': bearing.toStringAsFixed(1)}),
+                    style: t.titleLarge?.copyWith(color: AppColors.cream, fontSize: 20),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    tr('Point the top of your phone North, then turn {deg}° clockwise.', {'deg': bearing.round()}),
+                    style: t.bodySmall,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

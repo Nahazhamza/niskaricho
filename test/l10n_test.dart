@@ -8,6 +8,7 @@ import 'package:niskaricho/l10n/tr.dart';
 import 'package:niskaricho/models/prayer_model.dart';
 import 'package:niskaricho/models/progress_model.dart';
 import 'package:niskaricho/services/demo_backend.dart';
+import 'package:niskaricho/services/learn_namaz_content.dart';
 import 'package:niskaricho/services/zones.dart';
 import 'package:niskaricho/theme/look.dart';
 
@@ -44,7 +45,47 @@ Set<String> usedKeys() {
     ..addAll([for (final s in PrayerStatus.values) (L10n.lang.value = AppLang.en, s.label).$2])
     ..add('Circle Quest: 80% on time this week')
     ..addAll(demoCities.keys)
-    ..add('Your location');
+    ..add('Your location')
+    ..addAll([
+      for (final s in LearnNamazContent.wuduSteps) ...[
+        s.title,
+        s.whatToDo,
+        s.howToDo,
+        if (s.translation != null) s.translation!,
+        ...s.commonMistakes,
+      ],
+    ])
+    ..addAll([
+      for (final s in LearnNamazContent.salahSteps) ...[
+        s.title,
+        s.explanation,
+        s.translation,
+      ],
+    ])
+    ..addAll([
+      for (final p in LearnNamazContent.prayers) ...[
+        p.description,
+        p.structureSummary,
+        ...p.rakahSummary,
+      ],
+    ])
+    ..addAll([
+      for (final d in LearnNamazContent.beginnerDays) ...[
+        d.title,
+        d.subtitle,
+        d.overview,
+        ...d.keyTakeaways,
+        d.practicalStep,
+      ],
+    ])
+    ..addAll([
+      for (final r in LearnNamazContent.recitations) ...[
+        r.title,
+        r.context,
+        r.translation,
+        for (final l in r.lines) l.translation,
+      ],
+    ]);
   return keys;
 }
 

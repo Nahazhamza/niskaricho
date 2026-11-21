@@ -7,6 +7,7 @@ import 'screens/auth_screen.dart';
 import 'services/demo_backend.dart';
 import 'screens/home_shell.dart';
 import 'screens/language_screen.dart';
+import 'services/learn_namaz_service.dart';
 import 'l10n/tr.dart';
 import 'theme/app_theme.dart';
 import 'theme/look.dart';
@@ -22,6 +23,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Look.load();
   await L10n.load();
+  await LearnNamazService.instance.init();
   // Without credentials the app runs in demo mode (sample data, no backend).
   if (!kDemoMode) await Supabase.initialize(url: _supabaseUrl, publishableKey: _supabaseKey);
   runApp(const NiskarichoApp());
