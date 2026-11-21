@@ -40,7 +40,7 @@ class LearnNamazHubScreen extends StatelessWidget {
             children: [
               // Hero Welcome Banner
               GlassCard(
-                glow: AppColors.emerald,
+                glow: AppColors.electricPurple,
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,8 +52,8 @@ class LearnNamazHubScreen extends StatelessWidget {
                           height: 48,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: AppColors.emerald.withValues(alpha: 0.2),
-                            border: Border.all(color: AppColors.emerald.withValues(alpha: 0.5)),
+                            color: AppColors.electricPurple.withValues(alpha: 0.20),
+                            border: Border.all(color: AppColors.electricPurple.withValues(alpha: 0.55)),
                           ),
                           child: const Center(
                             child: Text('📖', style: TextStyle(fontSize: 24)),
@@ -66,12 +66,12 @@ class LearnNamazHubScreen extends StatelessWidget {
                             children: [
                               Text(
                                 tr('Learn Namaz'),
-                                style: t.titleLarge?.copyWith(fontSize: 22, fontWeight: FontWeight.bold),
+                                style: t.titleLarge?.copyWith(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.sandLight),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 tr('Step-by-step Islamic prayer & purification guide'),
-                                style: t.bodySmall?.copyWith(color: AppColors.cyan),
+                                style: t.bodySmall?.copyWith(color: AppColors.sand),
                               ),
                             ],
                           ),
@@ -81,7 +81,7 @@ class LearnNamazHubScreen extends StatelessWidget {
                     const SizedBox(height: 14),
                     Text(
                       tr('Learn how to perform Salah, step by step, with Arabic recitations, translations, and visual guidance.'),
-                      style: t.bodyMedium?.copyWith(height: 1.4, color: AppColors.cream),
+                      style: t.bodyMedium?.copyWith(height: 1.4, color: AppColors.sand),
                     ),
                     const SizedBox(height: 14),
 
@@ -89,8 +89,8 @@ class LearnNamazHubScreen extends StatelessWidget {
                     Row(
                       children: [
                         _quickStat('💧 ${tr('Wudu')}', prog.completedWudu ? tr('Completed') : tr('In Progress'), prog.completedWudu ? AppColors.emerald : AppColors.gold),
-                        _quickStat('🕋 ${tr('Prayers')}', '${prog.completedPrayers.length}/5', AppColors.cyan),
-                        _quickStat('📿 ${tr('Recitations')}', '${prog.masteredRecitations.length}/${LearnNamazContent.recitations.length}', AppColors.violet),
+                        _quickStat('🕋 ${tr('Prayers')}', '${prog.completedPrayers.length}/5', AppColors.sandLight),
+                        _quickStat('📿 ${tr('Recitations')}', '${prog.masteredRecitations.length}/${LearnNamazContent.recitations.length}', AppColors.electricPurple),
                         _quickStat('⚡ ${tr('Learning XP')}', '+${prog.xpEarned}', AppColors.gold),
                       ],
                     ),

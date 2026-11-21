@@ -214,7 +214,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Pressable(
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LearnNamazHubScreen())),
                 child: GlassCard(
-                  glow: AppColors.emerald,
+                  glow: AppColors.electricPurple,
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   child: Row(
                     children: [
@@ -222,8 +222,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.emerald.withValues(alpha: 0.2),
-                          border: Border.all(color: AppColors.emerald.withValues(alpha: 0.5)),
+                          color: AppColors.electricPurple.withValues(alpha: 0.18),
+                          border: Border.all(color: AppColors.electricPurple.withValues(alpha: 0.5)),
                         ),
                         child: const Text('📖', style: TextStyle(fontSize: 20)),
                       ),
@@ -236,18 +236,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               children: [
                                 Text(
                                   tr('Learn Namaz'),
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.cream),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.sandLight),
                                 ),
                                 const SizedBox(width: 8),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: AppColors.cyan.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(4),
+                                    color: AppColors.electricPurple.withValues(alpha: 0.22),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: AppColors.electricPurple.withValues(alpha: 0.45)),
                                   ),
                                   child: Text(
                                     tr('GUIDE'),
-                                    style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.cyan),
+                                    style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.sandLight),
                                   ),
                                 ),
                               ],
@@ -260,7 +261,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ],
                         ),
                       ),
-                      const Icon(Icons.chevron_right, size: 20, color: AppColors.muted),
+                      const Icon(Icons.chevron_right, size: 20, color: AppColors.sand),
                     ],
                   ),
                 ),
@@ -493,19 +494,24 @@ class _CountdownHero extends StatelessWidget {
     final a = active;
     final urgent = a != null && a.remainingAt(now) <= const Duration(minutes: 20);
     final digits = TextStyle(
-      fontSize: 46,
-      fontWeight: FontWeight.w200,
+      fontSize: 48,
+      fontWeight: FontWeight.w300,
       letterSpacing: 2,
-      color: AppColors.cream,
+      color: AppColors.sandLight,
       fontFeatures: const [FontFeature.tabularFigures()],
-      shadows: [Shadow(color: (urgent ? AppColors.missed : AppColors.cyan).withValues(alpha: 0.7), blurRadius: 18)],
+      shadows: [
+        Shadow(
+          color: (urgent ? AppColors.missed : AppColors.electricPurple).withValues(alpha: 0.65),
+          blurRadius: 22,
+        ),
+      ],
     );
     if (a == null) {
       return Column(
         children: [
           Text(
             '${tr('NEXT')} · ${next?.prayer.label ?? PrayerName.fajr.label}',
-            style: t.bodySmall?.copyWith(letterSpacing: 3, color: AppColors.cyan),
+            style: t.bodySmall?.copyWith(letterSpacing: 3, color: AppColors.electricPurple, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           if (next != null) Text(_fmt(next!.start.difference(now)), style: digits),
@@ -513,21 +519,21 @@ class _CountdownHero extends StatelessWidget {
             next != null
                 ? tr('until the adhan of {prayer}', {'prayer': next!.prayer.label})
                 : tr('Rest well. Fajr comes soon 🌙'),
-            style: t.bodySmall,
+            style: t.bodySmall?.copyWith(color: AppColors.sand),
           ),
         ],
       );
     }
     return Column(
       children: [
-        Text(a.prayer.label, style: t.titleMedium?.copyWith(color: AppColors.gold, letterSpacing: 1.5)),
+        Text(a.prayer.label, style: t.titleMedium?.copyWith(color: AppColors.sandLight, letterSpacing: 2, fontWeight: FontWeight.bold)),
         const SizedBox(height: 2),
         Text(
           urgent ? tr('TIME IS ENDING') : tr('TIME LEFT'),
-          style: t.bodySmall?.copyWith(letterSpacing: 3, color: urgent ? AppColors.missed : AppColors.cyan),
+          style: t.bodySmall?.copyWith(letterSpacing: 3, color: urgent ? AppColors.missed : AppColors.electricPurple, fontWeight: FontWeight.bold),
         ),
         Text(_fmt(a.remainingAt(now)), style: digits),
-        Text(tr('ends at {time}', {'time': Zones.hm(a.end, SupabaseService.instance.myTimezone)}), style: t.bodySmall),
+        Text(tr('ends at {time}', {'time': Zones.hm(a.end, SupabaseService.instance.myTimezone)}), style: t.bodySmall?.copyWith(color: AppColors.muted)),
       ],
     );
   }
@@ -542,20 +548,23 @@ class _GlowButton extends StatelessWidget {
   Widget build(BuildContext context) => Pressable(
     onTap: onTap,
     child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        gradient: const LinearGradient(colors: [Color(0xFFF0CF7A), AppColors.gold]),
-        boxShadow: [BoxShadow(color: AppColors.gold.withValues(alpha: 0.55), blurRadius: 18, spreadRadius: -2)],
+        gradient: const LinearGradient(colors: [Color(0xFFF7F2EB), AppColors.sand]),
+        boxShadow: [
+          BoxShadow(color: AppColors.sand.withValues(alpha: 0.40), blurRadius: 18, spreadRadius: -2),
+          BoxShadow(color: AppColors.electricPurple.withValues(alpha: 0.20), blurRadius: 12),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const MusallaIcon(size: 18, color: AppColors.night),
-          const SizedBox(width: 6),
+          const MusallaIcon(size: 18, color: AppColors.forestDeep),
+          const SizedBox(width: 8),
           Text(
             label,
-            style: const TextStyle(color: AppColors.night, fontWeight: FontWeight.w800),
+            style: const TextStyle(color: AppColors.forestDeep, fontWeight: FontWeight.w800, fontSize: 14),
           ),
         ],
       ),
@@ -579,7 +588,7 @@ class _PrayerCard extends StatelessWidget {
     final jumuah = window.prayer == PrayerName.dhuhr && SupabaseService.instance.myToday.weekday == DateTime.friday;
     final color = AppColors.forStatus(status);
     return GlassCard(
-      glow: live ? AppColors.gold : (status.isDone ? color.withValues(alpha: 0.6) : null),
+      glow: live ? AppColors.electricPurple : (status.isDone ? color.withValues(alpha: 0.6) : null),
       child: Row(
         children: [
           Container(

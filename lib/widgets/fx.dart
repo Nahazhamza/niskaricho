@@ -78,7 +78,11 @@ class _SkyPainter extends CustomPainter {
         ..shader = const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF030A12), Color(0xFF07211C), Color(0xFF0B1F1A)],
+          colors: [
+            Color(0xFF04140E), // deep forest night
+            Color(0xFF082218), // rich forest green
+            Color(0xFF0C2C20), // elevated forest ambient
+          ],
         ).createShader(rect),
     );
     final a = t * 2 * math.pi;
@@ -87,18 +91,21 @@ class _SkyPainter extends CustomPainter {
       r * size.shortestSide,
       Paint()
         ..color = c
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 90),
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 95),
     );
-    blob(AppColors.emerald.withValues(alpha: 0.22), 0.2 + 0.1 * math.sin(a), 0.15 + 0.05 * math.cos(a), 0.55);
-    blob(AppColors.violet.withValues(alpha: 0.16), 0.9 + 0.08 * math.cos(a * 2), 0.45 + 0.1 * math.sin(a), 0.5);
-    blob(AppColors.gold.withValues(alpha: 0.08), 0.5 + 0.2 * math.sin(a * 1.5), 0.95, 0.6);
+    // Forest green organic ambient aura
+    blob(AppColors.forestGreen.withValues(alpha: 0.30), 0.2 + 0.1 * math.sin(a), 0.15 + 0.05 * math.cos(a), 0.55);
+    // Electric purple cosmic pulse
+    blob(AppColors.electricPurple.withValues(alpha: 0.22), 0.88 + 0.08 * math.cos(a * 2), 0.45 + 0.1 * math.sin(a), 0.48);
+    // Warm desert sand amber dust
+    blob(AppColors.gold.withValues(alpha: 0.12), 0.5 + 0.2 * math.sin(a * 1.5), 0.92, 0.58);
 
     for (final s in stars) {
       final tw = 0.35 + 0.65 * (0.5 + 0.5 * math.sin(a * 6 + s.p * 20));
       canvas.drawCircle(
         Offset(s.x * size.width, s.y * size.height * 0.7),
         s.s,
-        Paint()..color = Colors.white.withValues(alpha: 0.5 * tw),
+        Paint()..color = AppColors.sandLight.withValues(alpha: 0.55 * tw),
       );
     }
   }
@@ -107,7 +114,7 @@ class _SkyPainter extends CustomPainter {
   bool shouldRepaint(_SkyPainter old) => old.t != t;
 }
 
-/// Masjid style: deep teal-navy with a faint gold lattice of eight-point
+/// Masjid style: deep forest green with a faint sand/gold lattice of eight-point
 /// stars (khatam), the pattern found in mosque tiles and musalla borders.
 class _GeometricPainter extends CustomPainter {
   const _GeometricPainter();
@@ -121,11 +128,11 @@ class _GeometricPainter extends CustomPainter {
         ..shader = const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF0A1A2A), Color(0xFF0C2530), Color(0xFF0B2420)],
+          colors: [Color(0xFF04140E), Color(0xFF08261B), Color(0xFF0E3325)],
         ).createShader(rect),
     );
     final line = Paint()
-      ..color = AppColors.gold.withValues(alpha: 0.10)
+      ..color = AppColors.sand.withValues(alpha: 0.12)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     const cell = 64.0;
@@ -146,13 +153,13 @@ class _GeometricPainter extends CustomPainter {
         canvas.drawCircle(c + const Offset(cell / 2, cell / 2), 3, line);
       }
     }
-    // A soft glow behind the top, like a lit dome.
+    // A soft electric purple / emerald glow behind the top, like a lit dome.
     canvas.drawCircle(
       Offset(size.width / 2, -size.width * 0.25),
       size.width * 0.8,
       Paint()
         ..shader = RadialGradient(
-          colors: [AppColors.emerald.withValues(alpha: 0.18), Colors.transparent],
+          colors: [AppColors.electricPurple.withValues(alpha: 0.15), Colors.transparent],
         ).createShader(Rect.fromCircle(center: Offset(size.width / 2, -size.width * 0.25), radius: size.width * 0.8)),
     );
   }
@@ -162,7 +169,7 @@ class _GeometricPainter extends CustomPainter {
 }
 
 // ---------------------------------------------------------------------------
-// Frosted glass panel with a soft neon edge.
+// Frosted glass panel with warm sand bevel and optional electric purple glow.
 // ---------------------------------------------------------------------------
 class GlassCard extends StatelessWidget {
   const GlassCard({
@@ -191,12 +198,10 @@ class GlassCard extends StatelessWidget {
           padding: padding,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(masjid ? 14 : radius),
-            color: masjid ? const Color(0xF2112A33) : const Color(0xE6122A26),
+            color: const Color(0xEE0E2E23), // deep forest surface
             border: Border.all(
-              color:
-                  glow?.withValues(alpha: 0.7) ??
-                  (masjid ? AppColors.gold.withValues(alpha: 0.35) : Colors.white.withValues(alpha: 0.10)),
-              width: masjid ? 1.2 : 1,
+              color: glow?.withValues(alpha: 0.7) ?? AppColors.sand.withValues(alpha: 0.14),
+              width: 1.1,
             ),
           ),
           child: child,
@@ -223,9 +228,15 @@ class GlassCard extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.white.withValues(alpha: 0.09), Colors.white.withValues(alpha: 0.03)],
+                  colors: [
+                    AppColors.sand.withValues(alpha: 0.08),
+                    AppColors.forestGreen.withValues(alpha: 0.12),
+                  ],
                 ),
-                border: Border.all(color: (glow ?? Colors.white).withValues(alpha: glow != null ? 0.45 : 0.10)),
+                border: Border.all(
+                  color: (glow ?? AppColors.sand).withValues(alpha: glow != null ? 0.45 : 0.14),
+                  width: 1.1,
+                ),
               ),
               child: child,
             ),

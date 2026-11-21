@@ -680,15 +680,15 @@ class _QiblaCompassPainter extends CustomPainter {
     final c = size.center(Offset.zero);
     final r = size.width / 2 - 8;
 
-    // Background circle
-    canvas.drawCircle(c, r, Paint()..color = const Color(0xFF08171B));
+    // Background circle: deep forest green dial
+    canvas.drawCircle(c, r, Paint()..color = const Color(0xFF071C15));
     canvas.drawCircle(
       c,
       r,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2
-        ..color = isFacing ? AppColors.onTime : AppColors.gold.withValues(alpha: 0.4),
+        ..color = isFacing ? AppColors.onTime : AppColors.sand.withValues(alpha: 0.45),
     );
 
     // Inner subtle ring
@@ -698,7 +698,7 @@ class _QiblaCompassPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1
-        ..color = Colors.white.withValues(alpha: 0.06),
+        ..color = AppColors.sand.withValues(alpha: 0.10),
     );
 
     // Draw rotated compass dial
@@ -715,8 +715,8 @@ class _QiblaCompassPainter extends CustomPainter {
       final isMedium = deg % 30 == 0;
       final tickLen = isMajor ? 14.0 : (isMedium ? 10.0 : 5.0);
       final tickColor = isMajor
-          ? (deg == 0 ? AppColors.cyan : AppColors.cream)
-          : (isMedium ? AppColors.gold.withValues(alpha: 0.7) : Colors.white.withValues(alpha: 0.25));
+          ? (deg == 0 ? AppColors.electricPurple : AppColors.sandLight)
+          : (isMedium ? AppColors.sand.withValues(alpha: 0.8) : AppColors.sand.withValues(alpha: 0.25));
 
       final startOffset = Offset(math.sin(rad) * (r - tickLen), -math.cos(rad) * (r - tickLen));
       final endOffset = Offset(math.sin(rad) * r, -math.cos(rad) * r);
@@ -732,10 +732,10 @@ class _QiblaCompassPainter extends CustomPainter {
 
     // Cardinal labels: N, E, S, W
     const cardinals = [
-      (0, 'N', AppColors.cyan),
-      (90, 'E', AppColors.cream),
-      (180, 'S', AppColors.cream),
-      (270, 'W', AppColors.cream),
+      (0, 'N', AppColors.electricPurple),
+      (90, 'E', AppColors.sandLight),
+      (180, 'S', AppColors.sandLight),
+      (270, 'W', AppColors.sandLight),
     ];
     for (final (deg, text, color) in cardinals) {
       final rad = deg * math.pi / 180.0;
