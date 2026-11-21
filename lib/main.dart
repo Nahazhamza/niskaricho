@@ -17,8 +17,11 @@ import 'widgets/fx.dart';
 /// Pass your project values at build time:
 ///   flutter run --dart-define=SUPABASE_URL=https://xyz.supabase.co \
 ///               --dart-define=SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
-const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-const _supabaseKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+const _defaultSupabaseUrl = 'https://kblvihzepdxeyogqqhtg.supabase.co';
+const _defaultSupabaseKey = 'sb_publishable_Z-x9AGoEQd62WLGO5nHQZA_NIiGLB5n';
+
+const _supabaseUrl = String.fromEnvironment('SUPABASE_URL', defaultValue: _defaultSupabaseUrl);
+const _supabaseKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY', defaultValue: _defaultSupabaseKey);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

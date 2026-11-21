@@ -16,9 +16,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'prayer_calculator_service.dart';
 import 'zones.dart';
 
-/// Demo mode is on when the app is started without Supabase credentials
-/// (e.g. plain `flutter run -d chrome`), or with `--dart-define=DEMO=true`.
-const kDemoMode = bool.fromEnvironment('DEMO') || String.fromEnvironment('SUPABASE_URL') == '';
+/// Demo mode is on when explicitly started with `--dart-define=DEMO=true`.
+const kDemoMode = bool.fromEnvironment('DEMO');
 
 /// Raised by the demo backend with the same codes the real SQL functions use,
 /// so the UI behaves identically.
